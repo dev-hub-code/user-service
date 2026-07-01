@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration scan="true" scanPeriod="30 seconds">
+
+    <!-- Application Name -->
+    <springProperty scope="context"
+                    name="APP_NAME"
+                    source="spring.application.name"
+                    defaultValue="application"/>
+
+    <!-- Log Directory -->
+    <property name="LOG_PATH" value="/home/rohit-patil/projects/kapila/logs"/>
+
+    <!-- Log File -->
+    <property name="LOG_FILE" value="${LOG_PATH}/${APP_NAME}.log"/>
+
+    <!-- ================= Log Patterns ================= -->
+
+    <property name="CONSOLE_LOG_PATTERN"
+              value="%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n"/>
+
+    <property name="FILE_LOG_PATTERN"
+              value="%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level [%X{traceId}] %logger{36} - %msg%n"/>
+
+    <!-- ================= Console Appender ================= -->
+
+    <appender name="CONSOLE"
+              class="ch.qos.logback.core.ConsoleAppender">
+
+        <encoder>
+            <pattern>${CONSOLE_LOG_PATTERN}</pattern>
+            <charset>UTF-8</charset>
+        </encoder>
+
+    </appender>
+
+    <!-- ================= Rolling File Appender ================= -->
+
+    <appender name="FILE"
+              class="ch.qos.logback.core.rolling.RollingFileAppender">
+
+        <file>${LOG_FILE}</file>
+
+        <append>true</append>
+
+        <encoder>
+            <pattern>${FILE_LOG_PATTERN}</pattern>
+            <charset>UTF-8</charset>
+        </encoder>
+
+        <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+
+            <!-- Daily + Size Based Rolling -->
+            <fileNamePattern>
+                ${LOG_PATH}/archive/${APP_NAME}.%d{yyyy-MM-dd}.%i.log.gz
+            </fileNamePattern>
+
+            <!-- Roll after 10 MB -->
+            <maxFileSize>10MB</maxFileSize>
+
+            <!-- Keep logs for 30 days -->
+            <maxHistory>30</maxHistory>
+
+            <!-- Total archive size -->
+            <totalSizeCap>5GB</totalSizeCap>
+
+            <!-- Don't delete history on startup -->
+            <cleanHistoryOnStart>false</cleanHistoryOnStart>
+
+        </rollingPolicy>
+
+    </appender>
+
+    <!-- ================= Framework Loggers ================= -->
+
+    <logger name="org.springframework" level="INFO"/>
+
+    <logger name="org.hibernate.SQL" level="INFO"/>
+    <logger name="org.hibernate.orm.jdbc.bind" level="WARN"/>
+
+    <logger name="com.zaxxer.hikari" level="INFO"/>
+
+    <!-- Replace with your base package -->
+    <logger name="com.kapila" level="DEBUG"/>
+
+    <!-- ================= Root Logger ================= -->
+
+    <root level="INFO">
+        <appender-ref ref="CONSOLE"/>
+        <appender-ref ref="FILE"/>
+    </root>
+
+</configuration>
